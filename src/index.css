@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+/* ---------- Theme tokens (Tailwind v4) ----------
+   અહીં define કરેલા colors/fonts automatically classes બની જાય છે:
+   bg-ink-950, text-brand-orange, font-display વગેરે */
+@theme {
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Space Grotesk", "Manrope", ui-sans-serif, sans-serif;
+
+  --color-ink-950: #05070b;
+  --color-ink-900: #0a0e15;
+  --color-ink-800: #111723;
+  --color-ink-700: #1a2231;
+
+  --color-brand-orange: #ff7a1a;
+  --color-brand-amber: #ffb020;
+  --color-brand-gold: #f5c451;
+  --color-brand-violet: #8b5cf6;
+  --color-brand-cyan: #22d3ee;
+
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-spin-slow: spin 14s linear infinite;
+  --animate-shimmer: shimmer 3s linear infinite;
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-12px); }
+  }
+  @keyframes shimmer {
+    to { background-position: 200% center; }
+  }
+}
+
+/* ---------- Base ---------- */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem; /* fixed navbar નીચે section છુપાય નહીં */
+  }
+  body {
+    @apply bg-ink-950 font-sans text-slate-300 antialiased;
+    overflow-x: clip; /* horizontal overflow રોકે */
+  }
+  h1, h2, h3, h4 {
+    @apply font-display tracking-tight text-white;
+  }
+  ::selection {
+    background: rgba(255, 122, 26, 0.35);
+    color: #fff;
+  }
+  /* Keyboard users માટે clear focus ring */
+  :focus-visible {
+    outline: 2px solid var(--color-brand-amber);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+}
+
+/* ---------- Custom utilities (reusable) ---------- */
+@utility glass {
+  background: linear-gradient(145deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(90deg, #ff7a1a, #ffb020, #f5c451, #ff7a1a);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+@utility bg-grid {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 30%, transparent 75%);
+}
+
+@utility perspective-1000 {
+  perspective: 1000px;
+}
+@utility preserve-3d {
+  transform-style: preserve-3d;
+}
+
+/* ---------- Scrollbar ---------- */
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: var(--color-ink-950); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--color-brand-orange), var(--color-brand-violet));
+  border-radius: 999px;
+  border: 2px solid var(--color-ink-950);
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+/* ---------- Animated gradient border (project cards hover) ---------- */
+@property --angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+@keyframes border-spin {
+  to { --angle: 360deg; }
+}
+.conic-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from var(--angle), transparent 0 55%, #ff7a1a, #8b5cf6, transparent);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.3s;
+  animation: border-spin 4s linear infinite;
+  pointer-events: none;
+}
+.conic-border:hover::before { opacity: 1; }
+
+/* ---------- GitHub contribution placeholder wave ---------- */
+@keyframes cell-wave {
+  0%, 100% { opacity: 0.2; }
+  50% { opacity: 0.55; }
+}
